@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="http://www.honor.cn/favicon.ico">
+    <title>华为荣耀8</title>
+    <style type="text/css">
+    input[type="number"] {
+        width: 35px;
+    }
+    </style>
+</head>
+
+<body>
+    <p>设置活动开始时间:</p>
+    <form id="form">
+        <input type="number" name="hour" placeholder="0" min="0" max="23">:时
+        <input type="number" name="minute" placeholder="0" min="0" max="59">:分
+        <input type="number" name="second" placeholder="0" min="0" max="59">:秒
+        <input type="button" value="submit" onclick="btnSubmit(this.parentNode)">
+    </form>
+    <p>倒计时: <span id="couterTime"></span></p>
+    <div id="honor-btn"><a href="" class="honor-btn-ready">参加抢购</a></div>
+    <script type="text/javascript">
+    // 获取用户输入的时间
+    var btnSubmit = function(form) {
+        var h = form.hour.value;
+        var m = form.minute.value;
+        var s = form.second.value;
+        // 默认值为0
+        h = (!!h) ? h : 0;
+        m = (!!m) ? m : 0;
+        s = (!!s) ? s : 0;
+        console.log(h + "时" + m + "分" + s + "秒");
+        if (h < 0 || h > 23 || m < 0 || m > 59 || s < 0 || s > 59) {
+            console.error("输入不合法");
+            alert("输入不合法");
+            return;
+        }
+        var totalSeconds = h * 3600 + m * 60 + s;
+        var date = new Date();
+        date.setHours(h, m, s);
+        counterDiff(date.getTime());
+    };
+
+    // 倒计时模块
+    var counterDiff = function(milliseconds) {
+        var updateTime = document.getElementById("counterTime");
+        var aLink = document.getElementById("honor-btn").getElementsByTagName("a")[0];
+        var timeID;
+
+        var counterDown = function() {
+            var diffTime = milliseconds - Date.now();
+            if (diffTime <= 0) {
+                clearInterval(timeID);
+                aLink.href = "https://www.baidu.com/";
+                aLink.innerHTML = "立即申购";
+                aLink.className = "honor-btn-go";
+            } else {
+                // 将 ms 转化为 s
+                diffTime = parseInt(diffTime / 1000, 10);
+                s = parseInt(diffTime % 60, 10);
+                m = parseInt(diffTime / 60, 10);
+                h = parseInt(diffTime / 3600, 10);
+                couterTime.innerHTML = h + " 小时 " + 　m + 　" 分钟 "　 + s + " 秒";
+            }
+        };
+        timeID = setInterval(counterDown, 500);
+    };
+    
+    // 抢购模块
+    var timeIDBuy;
+    var refresh = function() {
+        var honorBtnReady = document.getElementsByClassName("honor-btn-ready");
+        // 如果按钮链接中的class改变
+        if (honorBtnReady.length) {
+            console.info("waiting...");
+        } else {
+            console.info("立即申购");
+            clearInterval(timeIDBuy);
+            var aLink = document.getElementById("honor-btn").getElementsByTagName("a");
+            aLink[0].click();
+        }
+    };
+    timeIDBuy = setInterval(refresh, 500);
+    </script>
+</body>
+
+</html>
